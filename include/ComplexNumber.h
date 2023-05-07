@@ -21,6 +21,20 @@ public:
 };
 
 ComplexNumber operator+ (const ComplexNumber& a, const ComplexNumber& b);
+template <class T>
+ComplexNumber operator+ (const ComplexNumber& a, const T& b);
+template <class T>
+ComplexNumber operator+ (const T& a, const ComplexNumber& b);
+
+
+
+
 ComplexNumber operator- (const ComplexNumber& a, const ComplexNumber& b);
 ComplexNumber operator* (const ComplexNumber& a, const ComplexNumber& b);
 ComplexNumber operator/ (const ComplexNumber& a, const ComplexNumber& b);
+ComplexNumber operator+= (ComplexNumber& a, const ComplexNumber& b);
+ComplexNumber operator-= (ComplexNumber& a, const ComplexNumber& b);
+ComplexNumber operator*= (ComplexNumber& a, const ComplexNumber& b);
+ComplexNumber operator/= (ComplexNumber& a, const ComplexNumber& b);
+ComplexNumber operator~ (const ComplexNumber& a);
+ComplexNumber operator! (const ComplexNumber& b);

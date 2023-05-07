@@ -39,6 +39,26 @@ void OperatorTest()
     std::cout << "division (/): " << left / right << std::endl;
 }
 
+void OperatorTemplateTest()
+{
+
+}
+
+void OperatorSetTest()
+{
+
+}
+
+void SingleOperatorTest()
+{
+
+}
+
+void MandelBrot()
+{
+    
+}
+
 int main()
 {
     OperatorTest();

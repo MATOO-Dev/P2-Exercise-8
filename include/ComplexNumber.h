@@ -1,5 +1,7 @@
+#pragma once
 #include <iostream>
 #include <cmath>
+#include <math.h>
 #include <string>
 
 class ComplexNumber
@@ -78,23 +80,22 @@ inline void operator/= (ComplexNumber& a, const ComplexNumber& b)
     a = a / b;
 }
 
-inline void operator~ (const ComplexNumber& a)
+inline ComplexNumber operator~ (const ComplexNumber& a)
 {
-
+    return ComplexNumber(a.getReal(), a.getImg() * -1);
 }
 
-inline void operator! (const ComplexNumber& b)
+inline double operator! (const ComplexNumber& a)
 {
-
+    return sqrt(pow(a.getReal(), 2) + pow(a.getImg(), 2));
 }
 
 inline std::ostream& operator<< (std::ostream &os, const ComplexNumber& a)
 {
-    std::ostream result;
     //if(a.getImg() >= 0)
     //    printString += "+";
     //if(a.getImg() != 1)
     //    printString += a.getImg();
-
-    return os << "(" << a.getReal() << (a.getImg() >= 0 ? "+" : "") << (a.getImg() != 1 ? std::to_string(a.getImg()) : "") << a.getImg() << "i)";
+    //todo: tostring suffers from floating point imprecision, find a different option here
+    return os << "(" << a.getReal() << (a.getImg() >= 0 ? "+" : "") << a.getImg() << a.getImg() << "i)";
 }

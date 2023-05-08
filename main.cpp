@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include "include/ViewPortGL.h"
 #include "include/ComplexNumber.h"
+#include "include/MandelBrotCreator.h"
 
 void test() {
     ViewPortGL vp = ViewPortGL("OpenGL Plain Test", 1000, 1000);
@@ -70,14 +71,16 @@ void SingleOperatorTest()
 
 void MandelBrot()
 {
-    
+    ComplexNumber x = ComplexNumber(1, 0.5);
+    MandelBrotCreator mandelSet;
 }
 
 int main()
 {
-    OperatorTest();
-    OperatorTemplateTest();
+    //OperatorTest();
+    //OperatorTemplateTest();
 
+    MandelBrot();
 
     return 0;
 }

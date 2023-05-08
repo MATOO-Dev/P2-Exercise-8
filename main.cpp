@@ -65,11 +65,11 @@ void MandelBrot()
     ViewPortGL targetWindow = ViewPortGL("Mandelbrot yum yum", 300, 200);
     targetWindow.swapBuffers();
 
-    //define corners of out mandelbrot set
-    ComplexNumber topLeft = ComplexNumber(-0.796, -0.144);
-    ComplexNumber bottomRight = ComplexNumber(-0.793, -0.146);
+    //define corners of mandelbrot set
+    ComplexNumber topLeft = ComplexNumber(-0.796, -0.126);
+    ComplexNumber bottomRight = ComplexNumber(-0.793, -0.144);
     //starting values:  (-2+1i)         (1-1i)
-    //zoomed out:       (-20+10i)       (10-10i)
+    //zoomed out:       (-15+10i)       (10-10i)
     //zoomed in:        (-1+0i)         (1-1i)
     //zoomed in alot:   (-0.8-0.1i)     (-0.79-0.15i)
     //zoomed recursion: (-0.796-0.126i) (-0.793-0.144i)

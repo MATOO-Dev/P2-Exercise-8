@@ -37,11 +37,25 @@ void OperatorTest()
     std::cout << "multiplication (*): " << left * right << std::endl;
 
     std::cout << "division (/): " << left / right << std::endl;
+
+    std::cout << std::endl;
 }
 
 void OperatorTemplateTest()
 {
+    ComplexNumber complex = ComplexNumber(3, 5);
+    double var = 5;
 
+    std::cout << "complex: " << complex << std::endl;
+    std::cout << "var: " << var << std::endl;
+
+    std::cout << "complex + var: " << complex + var << std::endl;
+    std::cout << "var + complex: " << var + complex << std::endl;
+
+    std::cout << "complex - var: " << complex - var << std::endl;
+    std::cout << "var - complex: " << var - complex << std::endl;
+
+    std::cout << "test:" << 5 - ComplexNumber(3,-5) << std::endl;
 }
 
 void OperatorSetTest()
@@ -62,6 +76,7 @@ void MandelBrot()
 int main()
 {
     OperatorTest();
+    OperatorTemplateTest();
 
 
     return 0;

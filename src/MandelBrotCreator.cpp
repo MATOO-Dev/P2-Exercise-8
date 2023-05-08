@@ -127,3 +127,83 @@ void MandelBrotCreator::printProgressReport(unsigned int xPos, unsigned int yPos
         std::cout << ".";
     std::cout << "]\n";
 }
+
+void MandelBrotCreator::drawMandelbrotMenge(ViewPortGL& vp, const ComplexNumber& upperLeft, const ComplexNumber& lowerRight)
+{
+    //first, define delta
+    //real is between upperleft.real and lowerright.real
+    //originally -2
+    double horizontalMin = upperLeft.getReal();
+    //originally 1
+    double horizontalMax = lowerRight.getReal();
+    double horizontalDelta = abs(horizontalMax - horizontalMin);
+
+    //imaginary is between upperleft.img and lowerright.real
+    //originally 1
+    double verticalMin = upperLeft.getImg();
+    //originally -1
+    double verticalMax = lowerRight.getImg();
+    double verticalDelta = abs(verticalMax - verticalMin);
+
+    //next, define delta fraction
+    //double fraction = delta / windows size
+    double xFraction = (double)horizontalDelta / (double)vp.getXSize();
+    double yFraction = (double)verticalDelta / (double)vp.getYSize();
+ 
+    //counter for currently prepared pixels
+    unsigned int preparedPixelCount = 0;
+    unsigned int processedPixels = 0;
+
+    for(int yPos = 0; yPos < vp.getYSize(); yPos++)
+        for(int xPos = 0; xPos < vp.getXSize(); xPos++)
+        {
+            //print current progress to console
+            if(processedPixels % 100000 == 0)
+                printProgressReport(xPos, yPos, vp);
+
+            //define additional value for x 
+            double xAdditional = xPos * yFraction;
+            double yAdditional = yPos * yFraction;
+
+            //define values for new complex number
+            double complexX = horizontalMin + xAdditional;
+            double complexY = verticalMin - yAdditional;
+
+            ComplexNumber x = ComplexNumber(complexX, complexY);
+
+            //get index of complex number x
+            //additional parameter values open to interpretation
+            unsigned int n = getMandelbrotIndex(x, 100, 255);
+
+            //check color
+            //if n at least 255
+            if (n >= 255)
+            {
+                //prepare black pixel
+                vp.preparePix(xPos, yPos, 0, 0, 0);
+            }
+            else
+            {
+                //prepare pixel with color (n,n,0)
+                //vp.preparePix(xPos, yPos, n, n, 0);
+                //alternative color (f(n),f(n),0) with f(n) = ((2n^2)/510)+2n
+                double twoXSquared = 2 * (n * n);
+                double fraction = twoXSquared / (double)510;
+                double fn = fraction + double(2*n);
+                vp.preparePix(xPos, yPos, 0, fn, fn);
+            }
+            //update prepared pixel count
+            preparedPixelCount++;
+            processedPixels++;
+            //if max number of prepared pixels is reached, send them to buffer and reset counter
+            if(preparedPixelCount == ViewPortGL::getMaxNumberOfPreparedPixels())
+            {
+                vp.sendPixels();
+                preparedPixelCount = 0;
+            }
+        }
+    //final sendpixels for remaining pixels not yet sent
+    vp.sendPixels();
+    printProgressReport(vp.getXSize(), vp.getYSize(), vp);
+    std::cout << "Enjoy your Mandelbrot, freshly baked!\n";
+}

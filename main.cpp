@@ -40,10 +40,7 @@ void OperatorTest()
     std::cout << "division (/): " << left / right << std::endl;
 
     std::cout << std::endl;
-}
 
-void OperatorTemplateTest()
-{
     ComplexNumber complex = ComplexNumber(3, 5);
     double var = 5;
 
@@ -59,22 +56,33 @@ void OperatorTemplateTest()
     std::cout << "test:" << 5 - ComplexNumber(3,-5) << std::endl;
 }
 
-void OperatorSetTest()
-{
-
-}
-
-void SingleOperatorTest()
-{
-
-}
-
 void MandelBrot()
 {
-    MandelBrotCreator mandelSet;
-    ViewPortGL targetWindow = ViewPortGL("Mandelbrot yum yum", 1500, 1000);
-    mandelSet.drawMandelbrotMenge(targetWindow);
+    //fire up the oven
+    MandelBrotCreator mandelBrotOven;
+
+    //create new window and swap buffers to show black screen instead of empty with artefacts
+    ViewPortGL targetWindow = ViewPortGL("Mandelbrot yum yum", 300, 200);
     targetWindow.swapBuffers();
+
+    //define corners of out mandelbrot set
+    ComplexNumber topLeft = ComplexNumber(-0.796, -0.144);
+    ComplexNumber bottomRight = ComplexNumber(-0.793, -0.146);
+    //starting values:  (-2+1i)         (1-1i)
+    //zoomed out:       (-20+10i)       (10-10i)
+    //zoomed in:        (-1+0i)         (1-1i)
+    //zoomed in alot:   (-0.8-0.1i)     (-0.79-0.15i)
+    //zoomed recursion: (-0.796-0.126i) (-0.793-0.144i)
+    //zoomed branch:    (-0.796-0.144i) (-0.793-0.146i)
+
+    //draw mandelbrot set
+    //mandelBrotOven.drawMandelbrotMenge(targetWindow);
+    mandelBrotOven.drawMandelbrotMenge(targetWindow, topLeft, bottomRight);
+    
+    //swap buffer to mandelbrot set
+    targetWindow.swapBuffers();
+
+    //keep window open
     while (!targetWindow.windowShouldClose());
 }
 
@@ -82,7 +90,6 @@ int main()
 {
     //OperatorTest();
     //OperatorTemplateTest();
-
     MandelBrot();
 
     return 0;

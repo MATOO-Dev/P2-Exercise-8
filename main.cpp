@@ -71,8 +71,11 @@ void SingleOperatorTest()
 
 void MandelBrot()
 {
-    ComplexNumber x = ComplexNumber(1, 0.5);
     MandelBrotCreator mandelSet;
+    ViewPortGL targetWindow = ViewPortGL("Mandelbrot yum yum", 1500, 1000);
+    mandelSet.drawMandelbrotMenge(targetWindow);
+    targetWindow.swapBuffers();
+    while (!targetWindow.windowShouldClose());
 }
 
 int main()

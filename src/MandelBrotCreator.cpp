@@ -1,4 +1,6 @@
 #include "../include/MandelBrotCreator.h"
+#include <cmath>
+#include <cstdlib>
 
 unsigned int MandelBrotCreator::getMandelbrotIndex(ComplexNumber &x, double limes, int max)
 {
@@ -26,73 +28,102 @@ unsigned int MandelBrotCreator::getMandelbrotIndex(ComplexNumber &x, double lime
 
 void MandelBrotCreator::drawMandelbrotMenge(ViewPortGL& vp)
 {
-    //complex number value for pixel
-    //real is between -2 and 1
-    //imaginary is between -1 and 1
-
     //first, define delta
+    //real is between -2 and 1
     //horizontal delta = 3
-    //vertical delta = 2
-    unsigned int horizontalDelta;
-    unsigned int verticalDelta;
-        int horizontalMin = -2;
-        int horizontalMax = 1;
-        horizontalDelta = abs(horizontalMin) + abs(horizontalMax);
+    int horizontalMin = -2;
+    int horizontalMax = 1;
+    unsigned int horizontalDelta = abs(horizontalMax - horizontalMin);
 
-        int verticalMin = 1;
-        int verticalMax = -1;
-        verticalDelta = abs(verticalMin) + abs(verticalMax);
+    //imaginary is between -1 and 1
+    //vertical delta = 2
+    int verticalMin = 1;
+    int verticalMax = -1;
+    unsigned int verticalDelta = abs(verticalMax - verticalMin);
 
     //next, define delta fraction
     //double fraction = delta / windows size
-    //do this for both vertical and horizontal
+    double xFraction = (double)horizontalDelta / (double)vp.getXSize();
+    double yFraction = (double)verticalDelta / (double)vp.getYSize();
+ 
+    //counter for currently prepared pixels
+    unsigned int preparedPixelCount = 0;
+    unsigned int processedPixels = 0;
 
-    //define additional value for x 
-    //double xAdditional = pixel xPos * yFraction
-    //double yAdditional = pixel yPos * yFraction
+    for(int yPos = 0; yPos < vp.getYSize(); yPos++)
+        for(int xPos = 0; xPos < vp.getXSize(); xPos++)
+        {
+            //print current progress to console
+            if(processedPixels % 100000 == 0)
+                printProgressReport(xPos, yPos, vp);
 
-    //define values for new complex number
-    //complexX = -2 + xAdditional
-    //complexY = +1 - yAdditional
+            //define additional value for x 
+            double xAdditional = xPos * yFraction;
+            double yAdditional = yPos * yFraction;
 
-    //complexNumber x = ComplexNumber(complexX, complexY)
+            //define values for new complex number
+            double complexX = horizontalMin + xAdditional;
+            double complexY = verticalMin - yAdditional;
 
-    //get index of complex number x
-    //additional parameter values open to interpretation
-    //unsigned int n = getMandelbrotIndex(x, 100, 255);
+            ComplexNumber x = ComplexNumber(complexX, complexY);
 
-    //check needed color
-    //if n at least 255
-    //if n >= 255
-        //prepare black pixel
-    //else
-        //prepare pixel with color (n,n,0)
+            //get index of complex number x
+            //additional parameter values open to interpretation
+            unsigned int n = getMandelbrotIndex(x, 100, 255);
 
-    //note: before prepare, check for max number of preparable pixels
-    //if max pixels is reached, send them and reset the counter
+            //check color
+            //if n at least 255
+            if (n >= 255)
+            {
+                //prepare black pixel
+                vp.preparePix(xPos, yPos, 0, 0, 0);
+            }
+            else
+            {
+                //prepare pixel with color (n,n,0)
+                //vp.preparePix(xPos, yPos, n, n, 0);
+                //alternative color (f(n),f(n),0) with f(n) = ((2n^2)/510)+2n
+                double twoXSquared = 2 * (n * n);
+                double fraction = twoXSquared / (double)510;
+                double fn = fraction + double(2*n);
+                vp.preparePix(xPos, yPos, 0, fn, fn);
+            }
+            //update prepared pixel count
+            preparedPixelCount++;
+            processedPixels++;
+            //if max number of prepared pixels is reached, send them to buffer and reset counter
+            if(preparedPixelCount == ViewPortGL::getMaxNumberOfPreparedPixels())
+            {
+                vp.sendPixels();
+                preparedPixelCount = 0;
+            }
+        }
+    //final sendpixels for remaining pixels not yet sent
+    vp.sendPixels();
+    printProgressReport(vp.getXSize(), vp.getYSize(), vp);
+    std::cout << "Enjoy your Mandelbrot, freshly baked!\n";
+}
 
-    //alternative color (f(n),f(n),0)
-    //f(n) = ((2n^2)/510)+2x
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void MandelBrotCreator::printProgressReport(unsigned int xPos, unsigned int yPos, ViewPortGL &vp)
+{
+    //clear previous progress bar print
+    system("clear");
+    //get percentage of completion
+    unsigned int currentPixelIndex = (yPos * vp.getXSize()) + xPos;
+    unsigned int totalViewPortPixels = vp.getXSize() * vp.getYSize();
+    unsigned int roundedFraction = int(((double)currentPixelIndex / (double)totalViewPortPixels) * 100);
+    //print completion percentage
+    std::cout << "Progress: " << roundedFraction << "%  ";
+    //extra space if percentage smaller 10 so progress bar looks nicer ^^
+    if(roundedFraction < 10)
+        std::cout << " ";
+    //print progress bar
+    std::cout << "[";
+    unsigned int totalBarCount = 20;
+    unsigned int fullBarCount = ((float)roundedFraction/100) * totalBarCount;
+    for(int i = 0; i < fullBarCount; i ++)
+        std::cout << "#";
+    for (int i = 0; i < totalBarCount - fullBarCount; i++)
+        std::cout << ".";
+    std::cout << "]\n";
 }

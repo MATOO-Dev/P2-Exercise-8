@@ -158,8 +158,8 @@ void MandelBrotCreator::drawMandelbrotMenge(ViewPortGL& vp, const ComplexNumber&
         for(int xPos = 0; xPos < vp.getXSize(); xPos++)
         {
             //print current progress to console
-            if(processedPixels % 100000 == 0)
-                printProgressReport(xPos, yPos, vp);
+            //if(processedPixels % 100000 == 0)
+            //    printProgressReport(xPos, yPos, vp);
 
             //define additional value for x 
             double xAdditional = xPos * yFraction;
@@ -204,6 +204,6 @@ void MandelBrotCreator::drawMandelbrotMenge(ViewPortGL& vp, const ComplexNumber&
         }
     //final sendpixels for remaining pixels not yet sent
     vp.sendPixels();
-    printProgressReport(vp.getXSize(), vp.getYSize(), vp);
-    std::cout << "Enjoy your Mandelbrot, freshly baked!\n";
+    //printProgressReport(vp.getXSize(), vp.getYSize(), vp);
+    //std::cout << "Enjoy your Mandelbrot, freshly baked!\n";
 }

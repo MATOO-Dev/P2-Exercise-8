@@ -97,5 +97,5 @@ inline std::ostream& operator<< (std::ostream &os, const ComplexNumber& a)
     //if(a.getImg() != 1)
     //    printString += a.getImg();
     //todo: tostring suffers from floating point imprecision, find a different option here
-    return os << "(" << a.getReal() << (a.getImg() >= 0 ? "+" : "") << a.getImg() << a.getImg() << "i)";
+    return os << "(" << a.getReal() << (a.getImg() >= 0 ? "+" : "") << a.getImg() << "i)";
 }

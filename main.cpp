@@ -4,8 +4,6 @@
 #include "include/ViewPortGL.h"
 #include "include/ComplexNumber.h"
 #include "include/MandelBrotCreator.h"
-#include <thread>
-#include <chrono>
 
 void test() {
     ViewPortGL vp = ViewPortGL("OpenGL Plain Test", 1000, 1000);
@@ -88,6 +86,9 @@ void MandelBrot()
     while (!targetWindow.windowShouldClose());
 }
 
+//note: this doesnt currently work correctly.
+//the zoom in animation becomes faster and faster instead of staying at the correct speed
+//my assumption is that this is due to floating point inprecision
 void AnimateMandelBrot()
 {
     //fire up the oven
@@ -97,59 +98,50 @@ void AnimateMandelBrot()
     ViewPortGL targetWindow = ViewPortGL("Mandelbrot zoom goes weeeeee", 300, 200);
     targetWindow.swapBuffers();
 
-    //ComplexNumber topLeftStart = ComplexNumber(-4.541438989071, -2);
-    //ComplexNumber bottomRightStart = ComplexNumber(4.541438989071, 2);
+    //set starting coordinates
     ComplexNumber topLeftStart = ComplexNumber(-2, 1);
     ComplexNumber bottomRightStart = ComplexNumber(1, -1);
 
+    //set end coordinates
     ComplexNumber topLeftEnd = ComplexNumber(-0.743386245800, -0.131851022015);
     ComplexNumber bottomRightEnd = ComplexNumber(-0.743375071321, -0.131855868434);
+    //topLeftEnd = ComplexNumber(-1, 0.25);
+    //bottomRightEnd = ComplexNumber(-0.25, -0.25);
 
+    //calculate difference between start and end positions
     ComplexNumber topLeftDelta = topLeftEnd - topLeftStart;
     ComplexNumber bottomRightDelta = bottomRightEnd - bottomRightStart;
-    std::cout << "left delta: " << std::fixed << topLeftDelta.getReal() << std::endl;
 
-    double iterationSteps = 100;
+    //amount of images drawn
+    double iterationSteps = 10;
 
+    //calculate difference per step
     double leftStep = topLeftDelta.getReal() / iterationSteps;
     double topStep = topLeftDelta.getImg() / iterationSteps;
     double rightStep = bottomRightDelta.getReal() / iterationSteps;
     double bottomStep = bottomRightDelta.getImg() / iterationSteps;
-    std::cout << "left step: " << std::fixed << leftStep << std::endl;
-    std::cout << "expected " << std::endl;
 
-    double left = topLeftStart.getReal();
-    double top = topLeftStart.getImg();
-    double right = bottomRightStart .getReal();
-    double bottom = bottomRightStart.getImg();
-
+    //iterate until step count is reached or user closes window
     unsigned int currentIteration = 0;
-    while(!targetWindow.windowShouldClose()
-        && left < topLeftEnd.getReal()
-        && top  > topLeftEnd.getImg()
-        && right > bottomRightEnd.getReal()
-        && bottom < bottomRightEnd.getImg()
-    )
+    while(currentIteration < iterationSteps && !targetWindow.windowShouldClose())
     {
+        //increment step counter
         currentIteration++;
+
         //define corners of mandelbrot set
-        left = topLeftStart.getReal() + leftStep * currentIteration;
-        top = topLeftStart.getImg() + topStep * currentIteration;
-        right = bottomRightStart .getReal() + rightStep * currentIteration;
-        bottom = bottomRightStart.getImg() + bottomStep * currentIteration;
+        double left = topLeftStart.getReal() + leftStep * currentIteration;
+        double top = topLeftStart.getImg() + topStep * currentIteration;
+        double right = bottomRightStart .getReal() + rightStep * currentIteration;
+        double bottom = bottomRightStart.getImg() + bottomStep * currentIteration;
 
         ComplexNumber topLeft = ComplexNumber(left, top);
         ComplexNumber bottomRight = ComplexNumber(right, bottom);
-        std::cout << "Currently rendering set from " << topLeft << " to " << bottomRight << std::endl;
 
         //draw mandelbrot set
-        //mandelBrotOven.drawMandelbrotMenge(targetWindow);
         mandelBrotOven.drawMandelbrotMenge(targetWindow, topLeft, bottomRight);
 
         //swap buffer to mandelbrot set
         targetWindow.swapBuffers();
-
-        //this_thread::sleep_for(chrono::duration<float> (0.1f));
     }
 
     //keep window open
